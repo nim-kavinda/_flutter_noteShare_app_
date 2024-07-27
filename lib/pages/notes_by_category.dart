@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:note_app/models/note_model.dart';
 import 'package:note_app/services/note_services.dart';
+import 'package:note_app/utils/constant.dart';
+import 'package:note_app/utils/router.dart';
+import 'package:note_app/utils/text_style.dart';
+import 'package:note_app/widgets/note_category_card.dart';
 
 class NoteByCategory extends StatefulWidget {
   final String category;
@@ -35,7 +41,57 @@ class _NoteByCategoryState extends State<NoteByCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.category),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {
+            //go to note page
+            AppRouter.router.push("/notes");
+          },
+          icon: const Icon(
+            Icons.arrow_back,
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppConstant.kDefaultPadding,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                widget.category,
+                style: AppTextStyles.appTitle,
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: AppConstant.kDefaultPadding,
+                  mainAxisSpacing: AppConstant.kDefaultPadding,
+                  childAspectRatio: 7 / 11,
+                ),
+                itemCount: noteList.length,
+                itemBuilder: (context, index) {
+                  return NoteCategoryCard(
+                    noteTitle: noteList[index].title,
+                    noteContent: noteList[index].content,
+                    removeNote: () async {},
+                    editNote: () async {},
+                  );
+                },
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

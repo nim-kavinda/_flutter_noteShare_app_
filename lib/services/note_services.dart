@@ -84,4 +84,30 @@ class NoteServices {
     }
     return notes;
   }
+
+  // method to edit a note
+  Future<void> updateNote(Note note) async {
+    try {
+      final dynamic allNotes = await _myBox.get("notes");
+      final int index = allNotes.indexWhere((element) => element.id == note.id);
+
+      allNotes[index] = note;
+
+      await _myBox.put("notes", allNotes);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  //method to delete to note
+
+  Future<void> deleteNote(String noteId) async {
+    try {
+      final dynamic allNotes = await _myBox.get("notes");
+      allNotes.removeWhere((element) => element.id == noteId);
+      await _myBox.put("notes", allNotes);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }
