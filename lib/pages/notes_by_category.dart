@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:note_app/helpers/snackbar.dart';
 import 'package:note_app/models/note_model.dart';
 import 'package:note_app/services/note_services.dart';
 import 'package:note_app/utils/constant.dart';
@@ -37,6 +38,27 @@ class _NoteByCategoryState extends State<NoteByCategory> {
     });
   }
 
+  //edit note
+  void _editNote(Note note) {
+    //navigate to the edit note page
+    AppRouter.router.push("/edit-note", extra: note);
+  }
+
+  //remove note
+  Future<void> _removeNote(String id) async {
+    try {
+      await noteServices.deleteNote(id);
+      if (context.mounted) {
+        AppHelpers.showSnackbar(context, "Note Deleted Sucessfully");
+      }
+    } catch (e) {
+      print(e.toString());
+      if (context.mounted) {
+        AppHelpers.showSnackbar(context, "Note Deleted Sucessfully");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,20 +76,20 @@ class _NoteByCategoryState extends State<NoteByCategory> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: AppConstant.kDefaultPadding,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Text(
                 widget.category,
                 style: AppTextStyles.appTitle,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               GridView.builder(
@@ -84,8 +106,20 @@ class _NoteByCategoryState extends State<NoteByCategory> {
                   return NoteCategoryCard(
                     noteTitle: noteList[index].title,
                     noteContent: noteList[index].content,
-                    removeNote: () async {},
-                    editNote: () async {},
+                    removeNote: () async {
+                      await _removeNote(noteList[index].id);
+
+                      setState(() {
+                        noteList.removeAt(index);
+                      });
+                    },
+                    editNote: () async {
+                      _editNote(noteList[index]);
+                    },
+                    viewSingleNote: () {
+                      AppRouter.router
+                          .push("/single-note", extra: noteList[index]);
+                    },
                   );
                 },
               )

@@ -55,6 +55,17 @@ class NoteServices {
     return [];
   }
 
+  //method to add anew note
+  Future<void> addNote(Note note) async {
+    try {
+      final dynamic allNotes = await _myBox.get("notes");
+      allNotes.add(note);
+      await _myBox.put("notes", allNotes);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   //loop througn all notes and create an object where the key is the category and the value is the notes in that category
   Map<String, List<Note>> getNotesByCategoryApp(List<Note> allNotes) {
     final Map<String, List<Note>> notesByCategory = {};
@@ -109,5 +120,19 @@ class NoteServices {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  //method to get all the category
+  Future<List<String>> getAllCategories() async {
+    final List<String> categories = [];
+
+    final dynamic allNotes = await _myBox.get("notes");
+
+    for (final note in allNotes) {
+      if (!categories.contains(note.category)) {
+        categories.add(note.category);
+      }
+    }
+    return categories;
   }
 }
