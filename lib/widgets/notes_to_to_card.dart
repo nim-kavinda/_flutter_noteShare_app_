@@ -48,7 +48,7 @@ class _NotesToDoCardsState extends State<NotesToDoCards> {
                 height: 10,
               ),
               Text(
-                widget.title,
+                widget.description,
                 style: AppTextStyles.appDescriptionSmall.copyWith(
                   color: AppColors.kWhiteColor.withOpacity(0.5),
                 ),
